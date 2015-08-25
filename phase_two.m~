@@ -55,6 +55,7 @@ ifi = Screen('GetFlipInterval', window);
 Screen('TextFont', window, 'Ariel');
 Screen('TextSize', window, 36);
 
+# Let's make a mock photo for now
 
 exemplar_fname = {"01F_", "07F_", "09F_", "17F_"};
 emo_fname = {"HA", "NE", "AN"};
@@ -89,7 +90,7 @@ for trial = 1:n_trials
 		elseif keyCode(KbName("DownArrow"))
 			rating = max(rating - 1, 0);
 		end
-		#Doesn't recognize space character
+		
 		DrawFormattedText(window, strcat("Your rating is: ", int2str(rating)), 'center', screenYpixels * 0.5, 0);
 		DrawFormattedText(window, "Please rate the face from 1 to 10", 'center', screenYpixels * 0.25, 0);
 		Screen("Flip", window);

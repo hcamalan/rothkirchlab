@@ -24,8 +24,8 @@ n_trials = reps * locs * l_r * n_faces * n_emos; #4 locations for face, 2 for le
 trial_mat = zeros(n_trials, 5); #1: L/R; 2: Face location; 3: Participant response; 4: Face exemplar; 5:Emotion
 
 #Not sure if the counterbalancing is correct
-emo_ind = [1 2 3 1 2 3 1 2 3 1 2 3];
-face_ind = [1 1 1 2 2 2 3 3 3 4 4 4];
+emo_ind = [1 2 3 1 2 3 1 2 3 1 2 3]
+face_ind = [1 1 1 2 2 2 3 3 3 4 4 4]
 for i = 1:n_faces * n_emos
 	trial_mat(i:n_faces*n_emos:end, 4) = face_ind(i);
 	trial_mat(i:n_faces*n_emos:end, 5) = emo_ind(i);

@@ -9,5 +9,5 @@ function one_degree = visangcalc(dist, screen_res, screen_width)
 	one_degree_cm = tan(pi/180)*dist;
 	pix_length = screen_width/screen_res;
 	
-	one_degree = int8(round(one_degree_cm/pix_length))
+	one_degree = int(round(one_degree_cm/pix_length))
 end

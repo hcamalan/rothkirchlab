@@ -49,9 +49,9 @@ Screen('TextSize', window, 36);
 
 #Necessary for rectangles
 [xCenter, yCenter] = RectCenter(windowRect);
-dist_from_center = [-400, 400];
+dist_from_center = [-10*one_deg, 10*one_deg];
 rect_pos = xCenter .+ dist_from_center;
-base_rect = [0 0 400 400];
+base_rect = [0 0 10*one_deg 10*one_deg];
 
 for i = 1:2
 	#Final positions of rectangle corners
