@@ -13,7 +13,7 @@ Column Indices are as follows:
 %Parameters
 reps = 1;
 n_faces = 4
-n_emos = 3
+n_emos = 1
 reward = 0.8
 
 n_trials = reps * n_faces * n_emos * 5; 
@@ -29,7 +29,7 @@ trial_mat(n_trials*reward/2:n_trials*reward, 3) = 1
 
 %Emotion
 %there should be a better way to do this
-emo_ind = [1 1 1 1 2 2 2 2 3 3 3 3]
+emo_ind = [1 1 1 1 1 1 1 1 1 1 1 1]
 for i = 1:n_faces * n_emos
 	trial_mat(i:n_faces*n_emos:end, 2) = emo_ind(i)
 end
@@ -42,6 +42,10 @@ trial_mat = trial_mat(randperm(n_trials), :);
 #one_deg = visangcalc(60, 1368, 30);
 #10*one_deg
 
+
+
+
+
 #All of these has to do with the screen object
 PsychDefaultSetup(2);
 Screen('Preference', 'SkipSyncTests', 1);
@@ -49,15 +53,29 @@ Screen('Preference', 'SuppressAllWarnings', 1);
 screens = Screen('Screens');
 screenNumber = max(screens);
 [window, windowRect] = PsychImaging('OpenWindow', screenNumber, 0.5);
-#Screen('BlendFunction', window, 'GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA');
+Screen('BlendFunction', window, 'GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA');
 [screenXpixels, screenYpixels] = Screen('WindowSize', window);
 ifi = Screen('GetFlipInterval', window);
 Screen('TextFont', window, 'Ariel');
 Screen('TextSize', window, 36);
 
 
+dist_from_center = [-480 480];
+rect_pos = (screenXpixels/2) .+ dist_from_center;
+base_rect_1 = [0 0 480 480];
+
+for i = 1:2
+	#Final positions of rectangle corners
+	rects(:, i) = CenterRectOnPointd(base_rect_1, rect_pos(i), screenYpixels/2);
+
+end
+
+baseRect = [0 0 20 200]	
+centeredRect = CenterRectOnPointd(baseRect, screenXpixels*0.7, screenYpixels*0.5);
+rectColor = [1 0 0];
+
 exemplar_fname = {"01F_", "07F_", "09F_", "17F_"};
-emo_fname = {"HA", "NE", "AN"};
+emo_fname = {"NE"};
 
 #Trials start here
 for trial = 1:n_trials
@@ -66,18 +84,43 @@ for trial = 1:n_trials
 	img = imread(img_str);
 	imgTexture = Screen('MakeTexture', window, img);
 
-	# Inter trial interval
-	Screen('DrawTexture', window, imgTexture, [], [], 0);
+	rect_mat = ones(size(img)) * 0.5;
+	rect_mat = SetImageAlpha(rect_mat, 0.5);
+	rectTexture = Screen('MakeTexture', window, rect_mat);
 
-	
+
+		
+
+	# Inter trial interval
+	for i = 1:2	
+		Screen('DrawTexture', window, imgTexture, [], rects(:, i), 0);
+		Screen('DrawTexture', window, rectTexture, [], rects(:, i), 0);
+	end
 	DrawFormattedText(window, strcat(int2str(trial_mat(trial, 3)*50), "c"), 'center', screenYpixels * 0.95, 0);
 	Screen("Flip", window);
-	WaitSecs(0.5);
+	WaitSecs(0.1);
 
 	Screen("Flip", window)
 	
 	end_trial = false;
 	rating = 0;
+	trial_mat(trial,4) = rating;
+	Screen("Flip", window);
+	WaitSecs(0.1)
+end
+
+
+for i = 1:4
+
+
+
+	img_str = strcat("./faces/", exemplar_fname{i}, emo_fname{1}, ".bmp");
+	img = imread(img_str);
+	imgTexture = Screen('MakeTexture', window, img);
+	
+
+	# Inter trial interval
+	
 	while end_trial == false
 
 		[keyIsDown,secs, keyCode] = KbCheck;
@@ -86,18 +129,26 @@ for trial = 1:n_trials
 			end_trial = true;
 		elseif keyCode(KbName("UpArrow"))
 			rating = min(rating + 1, 10);
+			baseRect(4) = min(baseRect(4) + 10, 500)
+			rating = baseRect(4)
 		elseif keyCode(KbName("DownArrow"))
-			rating = max(rating - 1, 0);
+			baseRect(4) = max(baseRect(4) - 10, 0)
+			rating = baseRect(4)		
+
 		end
 		#Doesn't recognize space character
-		DrawFormattedText(window, strcat("Your rating is: ", int2str(rating)), 'center', screenYpixels * 0.5, 0);
-		DrawFormattedText(window, "Please rate the face from 1 to 10", 'center', screenYpixels * 0.25, 0);
+		centeredRect = CenterRectOnPointd(baseRect, screenXpixels*0.7, screenYpixels*0.9 - baseRect(4)/2);
+		Screen('FillRect', window, rectColor, centeredRect);
+
+		Screen('DrawTexture', window, imgTexture, [], [], 0);
+
+
+		DrawFormattedText(window, "Please rate the face using up and down arrow keys", 'center', screenYpixels * 0.02, 0);
 		Screen("Flip", window);
 		WaitSecs(0.07)
 	end
-	trial_mat(trial,4) = rating;
-	Screen("Flip", window);
-	WaitSecs(0.2)
+	end_trial = false;
+	
 end
 trial_mat
 % Clear the screen
