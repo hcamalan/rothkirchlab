@@ -52,7 +52,7 @@ Screen('Preference', 'Verbosity', 0);
 screens = Screen('Screens');
 screenNumber = max(screens);
 [window, windowRect] = PsychImaging('OpenWindow', screenNumber, 0.5);
-Screen('BlendFunction', window, 'GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA');
+%Screen('BlendFunction', window, 'GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA');
 [screenXpixels, screenYpixels] = Screen('WindowSize', window);
 ifi = Screen('GetFlipInterval', window);
 Screen('TextFont', window, 'Ariel');
@@ -80,7 +80,7 @@ dist_from_c = repmat(transpose(dist_from_center), [1, 4]);
 xCoords = xCoords - dist_from_c;
 allCoords = [xCoords(1, :); yCoords; xCoords(2, :); yCoords];
 
-% Key codes for linux using KbDemo
+% Key codes
 escapeKey = KbName('ESCAPE');
 upper_left = KbName('f'); %position 1
 upper_right = KbName('j'); % position 2
@@ -97,7 +97,6 @@ end_experiment = false;
 
 %Trials start here
 for trial = 1:n_trials
-
 	% Position the image
 	img_LR_ind = mod(trial_mat(trial, 1), 2) + 1; % Switches the indices
 	imgpos = trial_mat(trial, 2);
@@ -124,7 +123,7 @@ for trial = 1:n_trials
 
 	%Parameter for transparency
 	alpha = 1;
-	temp_alpha = alpha
+	temp_alpha = alpha;
 
 	%Boolean we use to finish the trial
 	end_trial = false;
@@ -140,20 +139,20 @@ for trial = 1:n_trials
 			whichmask = floor(rand*nmask)+1;
 			
 			%Set transparency
-			alpha = max(0, alpha - 0.06);
+			%alpha = max(0, alpha - 0.06);
 
 			%If transparency doesn't change anymore, don't make any new textures			
-			if abs(temp_alpha - alpha) > 0.05
-				rect_mat = SetImageAlpha(rect_mat, alpha);
-				rectTexture = Screen('MakeTexture', window, rect_mat, 0, 4);
-			end
+			%if abs(temp_alpha - alpha) > 0.05
+			%	rect_mat = SetImageAlpha(rect_mat, alpha);
+			%	rectTexture = Screen('MakeTexture', window, rect_mat, 0, 4);
+			%end
 
 			maskTexture = Screen('MakeTexture', window, masks{whichmask}, 0, 4);
 
 			%Draw mask and image
 			Screen('DrawTexture', window, maskTexture, [], rects(:, trial_mat(trial, 1)), 0);	
 			Screen('DrawTexture', window, imgTexture, [], img_rect, 0);
-			Screen('DrawTexture', window, rectTexture, [], img_rect, 0);
+			%Screen('DrawTexture', window, rectTexture, [], img_rect, 0);
 
 			% Draw rectangles and fixation
 			Screen('DrawLines', window, allCoords(1:2, :),lineWidthPix, 1, [xCenter yCenter]);
@@ -208,7 +207,13 @@ for trial = 1:n_trials
 	WaitSecs(2);
 end
 
-save("trialmat.csv")
-%trial_mat
+
+%for matlab use
+%save('trial.mat', trial_mat)
+dlmwrite ('trial.mat', trial_mat)
+
+
 % Clear the screen
 sca;
+clear all;
+close all;

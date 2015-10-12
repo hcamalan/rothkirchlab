@@ -10,8 +10,8 @@ emo_fname = {'HA', 'AN'};
 
 %Encode randomized and counterbalanced trial matrix
 reps = 1;
-n_faces = 4;
-n_emos = 2;
+n_faces = length(exemplar_fname);
+n_emos = length(emo_fname);
 l_r = 2;
 locs = 4;
 
@@ -40,9 +40,6 @@ end
 
 trial_mat = trial_mat(randperm(n_trials), :);
 
-
-% Screen object creation
-
 %Right now we can't use this variable for a weird reason
 one_deg = visangcalc(60, 1368, 30);
 
@@ -50,6 +47,8 @@ one_deg = visangcalc(60, 1368, 30);
 PsychDefaultSetup(2);
 Screen('Preference', 'SkipSyncTests', 1);
 Screen('Preference', 'SuppressAllWarnings', 1);
+Screen('Preference', 'Verbosity', 0);
+%Screen('Preference', 'ConserveVRAM', 2);
 screens = Screen('Screens');
 screenNumber = max(screens);
 [window, windowRect] = PsychImaging('OpenWindow', screenNumber, 0.5);
@@ -61,11 +60,9 @@ Screen('TextSize', window, 36);
 
 %Necessary for rectangles
 [xCenter, yCenter] = RectCenter(windowRect);
-
-%one_deg
-dist_from_center = [-480 480];
-rect_pos = xCenter .+ dist_from_center;
-base_rect = [0 0 480 480];
+dist_from_center = [-10*one_deg 10*one_deg];
+rect_pos = xCenter + dist_from_center;
+base_rect = [0 0 one_deg*10 one_deg*10];
 
 
 for i = 1:2
@@ -80,7 +77,7 @@ xCoords = repmat([-fixCrossDimPix fixCrossDimPix 0 0], [2 1]);
 yCoords = [0 0 -fixCrossDimPix fixCrossDimPix];
 lineWidthPix = 4;
 dist_from_c = repmat(transpose(dist_from_center), [1, 4]);
-xCoords = xCoords .- dist_from_c;
+xCoords = xCoords - dist_from_c;
 allCoords = [xCoords(1, :); yCoords; xCoords(2, :); yCoords];
 
 % Key codes for linux using KbDemo
@@ -91,20 +88,18 @@ lower_left = KbName('v'); % position 3
 lower_right = KbName('n'); % position 4
 
 
-%Initial mask variable
-nmask = 50
+%Mask variable
+nmask = 100
 masks = make_mondrian_masks(base_rect(3), base_rect(4), nmask, 1, 1);
-%masks = rand(base_rect(3), base_rect(4), 100);
 
+%Ends experiment if it becomes true
 end_experiment = false;
 
 %Trials start here
 for trial = 1:n_trials
 
-	%mask = ones(size(masks{1}));
-
-	% Position and draw the image
-	img_LR_ind = mod(trial_mat(trial, 1), 2) + 1; % Switches the indexes
+	% Position the image
+	img_LR_ind = mod(trial_mat(trial, 1), 2) + 1; % Switches the indices
 	imgpos = trial_mat(trial, 2);
 
 	img_cents = [rects(1, img_LR_ind) + rects(3, img_LR_ind), rects(2, img_LR_ind) + rects(4, img_LR_ind)] / 2; % X and Y averages, respectively
@@ -147,8 +142,8 @@ for trial = 1:n_trials
 			%Set transparency
 			alpha = max(0, alpha - 0.06);
 
-			%If transparency doesn't change, don't make any new textures anymore			
-			if temp_alpha != alpha
+			%If transparency doesn't change anymore, don't make any new textures			
+			if abs(temp_alpha - alpha) > 0.05
 				rect_mat = SetImageAlpha(rect_mat, alpha);
 				rectTexture = Screen('MakeTexture', window, rect_mat, 0, 4);
 			end
@@ -161,11 +156,13 @@ for trial = 1:n_trials
 			Screen('DrawTexture', window, rectTexture, [], img_rect, 0);
 
 			% Draw rectangles and fixation
-			Screen('DrawLines', window, allCoords(1:2, :),lineWidthPix, 1, [xCenter yCenter], 2);
-			Screen('DrawLines', window, allCoords(3:end, :),lineWidthPix, 1, [xCenter yCenter], 2);
+			Screen('DrawLines', window, allCoords(1:2, :),lineWidthPix, 1, [xCenter yCenter]);
+			Screen('DrawLines', window, allCoords(3:end, :),lineWidthPix, 1, [xCenter yCenter]);
 			Screen('FrameRect', window, 1, rects, lineWidthPix);
 	
 			%Flip
+			
+			Screen('DrawingFinished', window);
 			Screen('Flip', window);
 			
 		end
@@ -197,19 +194,24 @@ for trial = 1:n_trials
 		
 	end
 	
-	%To end the experiment abruptly
+	%To end the experiment abruptly using ESC key
 	if end_experiment == true
 		break;
 		%sca;
 	end
 	
 	% Inter trial interval
-	Screen('DrawLines', window, allCoords(1:2, :),lineWidthPix, 0.5, [xCenter yCenter], 2);
-	Screen('DrawLines', window, allCoords(3:end, :),lineWidthPix, 0.5, [xCenter yCenter], 2);
+	Screen('DrawLines', window, allCoords(1:2, :),lineWidthPix, 0.5, [xCenter yCenter]);
+	Screen('DrawLines', window, allCoords(3:end, :),lineWidthPix, 0.5, [xCenter yCenter]);
 	Screen('FrameRect', window, 0.5, rects, lineWidthPix);
 	Screen('Flip', window);
 	WaitSecs(2);
 end
+
+%for matlab use
+%save('trial.mat', trial_mat)
+dlmwrite ('trial.mat', trial_mat)
+	
 %trial_mat
 % Clear the screen
 sca;
