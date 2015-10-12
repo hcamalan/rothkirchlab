@@ -204,12 +204,14 @@ for trial = 1:n_trials
 	Screen('FrameRect', window, 0.5, rects, lineWidthPix);
 	Screen('Flip', window);
 	WaitSecs(2);
+	%Save information in any case
+	dlmwrite ('trial.csv', trial_mat)
 end
 
 
 %for matlab use
 %save('trial.mat', trial_mat)
-dlmwrite ('trial.mat', trial_mat)
+dlmwrite ('trial.csv', trial_mat)
 
 
 % Clear the screen
