@@ -4,8 +4,8 @@ sca;
 
 
 %For finding image files
-exemplar_fname = {"01F_", "07F_", "09F_", "17F_"};
-emo_fname = {"HA", "AN"};
+exemplar_fname = {'01F_', '07F_', '09F_', '17F_'};
+emo_fname = {'HA', 'AN'};
 
 
 %Encode randomized and counterbalanced trial matrix
@@ -84,11 +84,11 @@ xCoords = xCoords .- dist_from_c;
 allCoords = [xCoords(1, :); yCoords; xCoords(2, :); yCoords];
 
 % Key codes for linux using KbDemo
-escapeKey = KbName("ESCAPE");
-upper_left = KbName("f"); %position 1
-upper_right = KbName("j"); % position 2
-lower_left = KbName("v"); % position 3
-lower_right = KbName("n"); % position 4
+escapeKey = KbName('ESCAPE');
+upper_left = KbName('f'); %position 1
+upper_right = KbName('j'); % position 2
+lower_left = KbName('v'); % position 3
+lower_right = KbName('n'); % position 4
 
 
 %Initial mask variable
@@ -120,7 +120,7 @@ for trial = 1:n_trials
 	end
 	
 
-	img_str = strcat("./faces/", exemplar_fname{trial_mat(trial, 4)}, emo_fname{trial_mat(trial, 5)}, ".bmp");
+	img_str = strcat('./faces/', exemplar_fname{trial_mat(trial, 4)}, emo_fname{trial_mat(trial, 5)}, '.bmp');
 	img = imread(img_str);
 	imgTexture = Screen('MakeTexture', window, img);
 
@@ -202,12 +202,12 @@ for trial = 1:n_trials
 		break;
 		%sca;
 	end
-	trial_mat
+	
 	% Inter trial interval
 	Screen('DrawLines', window, allCoords(1:2, :),lineWidthPix, 0.5, [xCenter yCenter], 2);
 	Screen('DrawLines', window, allCoords(3:end, :),lineWidthPix, 0.5, [xCenter yCenter], 2);
 	Screen('FrameRect', window, 0.5, rects, lineWidthPix);
-	Screen("Flip", window);
+	Screen('Flip', window);
 	WaitSecs(2);
 end
 %trial_mat
