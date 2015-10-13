@@ -183,12 +183,13 @@ for trial = 1:n_trials
 
 		%Get key response, classify key response
 		[keyIsDown,secs, keyCode] = KbCheck;
-
 		if keyIsDown
+			
 			if keyCode(escapeKey)
 				end_trial = true;
 				end_experiment = true;			
 				break;
+				
 			elseif keyCode(upper_left)
 				trial_mat(trial, 3) = 1;
 				end_trial = true;
@@ -220,9 +221,9 @@ for trial = 1:n_trials
 	WaitSecs(2);
 end
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%WARNING!!! BELOW LINE PROBABLY ONLY WORKS IN OCTAVE
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%WARNING!!! BELOW LINE PROBABLY DOESN'T WORK IN MATLAB
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 dlmwrite ('trial.mat', trial_mat)
 %for matlab, use:
 %save('trial.mat', trial_mat)
