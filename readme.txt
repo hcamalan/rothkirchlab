@@ -1,19 +1,5 @@
-REPORT
+This is a project I had from my time working as a student assistant at a visual perception laboratory in late 2015.
 
-11.09.2015
-Opened git repository and uploaded all the relevant code until today's lab meeting.
+It is not possible to run this code without some face images, which are not included in the repository.
 
-18.09.2015
-Code for the phase one is almost finished. Minor problems have to be fixed about keyboard input.
-
-12.10.2015
-Memory overflow problem persisting, partly due to the blending. Keyboard input is fixed but needs to be disabled after getting one input for a trial.
-
-
-For phase one, use: phase_one.m
-- Same, but without fancy alphablending: without_blending.m
-- Results are currently collected in a csv file called "trial.csv"
-
-
-Other things to do before experiment goes on air:
-- Encode subject initials and date/time to avoid mixing data
+The code is written in Matlab, however it was programmed and run on Octave using Psychtoolbox.
